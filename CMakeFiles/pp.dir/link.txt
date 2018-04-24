@@ -1,0 +1,1 @@
+/usr/local/mpich-3.2/bin/mpicc  -g   CMakeFiles/pp.dir/pp.c.o  -o pp -rdynamic ../../../core/libROSS.a -lm 
