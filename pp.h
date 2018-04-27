@@ -18,7 +18,7 @@ typedef int     Channel_t;
 typedef int     Min_t;
 typedef int     MethodName_t;
 
-// CASE_NAME [case number]
+/* METHOD CASE [NAME] [NUMBER]*/
 #define UPDATE_METHOD 0
 #define PREDATOR_MSG 1
 #define PREY_MSG 2
@@ -27,25 +27,15 @@ typedef int     MethodName_t;
 
 /********* User Entity Classes ******************************************/
 
-/* define state of "cell"
-number of predators, number of prey, number of grass */
+/* define state of cell*/
 struct State
 {
-	//int             Normal_Channels;
-	//int             Reserve_Channels;
-	//int             Portables_In;
-	//int             Portables_Out;
-	//int             Call_Attempts;
-	//int             Channel_Blocks;
-	//int             Busy_Lines;
-	//int             Handoff_Blocks;
-	int             CellLocationX;
-	int             CellLocationY;
-	//initializing Predator, Prey, Grass
+	int     CellLocationX;
+	int     CellLocationY;
 	int 	Predator;
 	int 	Prey;
 	int 	Grass;
-	//Statistics
+	//counter variables for number of predator/prey in/out of cell
 	int 	Predator_in;
 	int 	Predator_out;
 	int 	Prey_in;
@@ -55,8 +45,6 @@ struct State
 /* reverse computing */ 
 struct RC
 {
-	//int             wl1;	
-	//Reverse compute Predator, Prey, Grass
 	int 	Predator;
 	int 	Prey;
 	int 	Grass;
@@ -71,44 +59,27 @@ arrival prey / arrival predator and associated health factor */
 struct Msg_Data
 {
 	MethodName_t    MethodName;
-	double          CompletionCallTS;
-	double          NextCallTS;
-	double          MoveCallTS;
-	Channel_t       ChannelType;
-	struct RC       RC;
 };
 
-/* stats on the entire world
-ex. number of predator that died, number of prey that died */ 
+/* Cell Statistics */ 
 struct CellStatistics
 {
-	//int             Call_Attempts;
-	//int             Channel_Blocks;
-	//int             Busy_Lines;
-	//int             Handoff_Blocks;
-	//int             Portables_In;
-	//int             Portables_Out;
-	//double          Blocking_Probability;
-
-  //add statistic variables to print here
-    int             Grass;
-    int 			Predator;
-    int 			Prey;
-    int 			Predator_in;
-  	int 			Predator_out;
-  	int 			Prey_in;
-  	int 			Prey_out;
-  	double 			Avg_Pred_amount;
-  	double 			Avg_Prey_amount;
-  	double 			Avg_Pred_in;
-  	double 			Avg_Pred_out;
-  	double 			Avg_Prey_in;
-  	double 			Avg_Prey_out;
+        int  	Grass;
+        int 	Predator;
+        int 	Prey;
+        int 	Predator_in;
+        int 	Predator_out;
+  	int 	Prey_in;
+  	int 	Prey_out;
+  	double 	Avg_Pred_amount;
+  	double 	Avg_Prey_amount;
+  	double 	Avg_Pred_in;
+  	double 	Avg_Pred_out;
+  	double 	Avg_Prey_in;
+  	double 	Avg_Prey_out;
 };
 
-/* event handlers 
-need to define my own 
-ex. predator arrival, prey arrival, update cell */
+/* Function Declaration */
 tw_lpid         Cell_ComputeMove( tw_lpid lpid, int direction );
 tw_peid         CellMapping_lp_to_pe(tw_lpid lpid);
 tw_lp          *CellMapping_to_lp(tw_lpid lpid);
@@ -122,6 +93,6 @@ void            CellStatistics_CollectStats(struct State *, tw_lp *lp);
 void            CellStatistics_Compute();
 void            CellStatistics_Print();
 
-/* declares CellStats - makes it global to the model */
+/* Declare CellStats - make it global to the model */
 struct CellStatistics TWAppStats;
 tw_lpid nlp_per_pe = 0; //global variable - determines how many LPs are there per MPI rank

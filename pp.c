@@ -279,10 +279,9 @@ void RC_Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_l
     }
 }
 
-/*Calculate Global Statistics*/
+/*Collect Global Statistics*/
 void CellStatistics_CollectStats(struct State *SV, tw_lp * lp)
 {
-  //Collect Global Statistics
   TWAppStats.Grass += SV->Grass;
   TWAppStats.Predator += SV->Predator;
   TWAppStats.Prey += SV->Prey;
@@ -292,10 +291,9 @@ void CellStatistics_CollectStats(struct State *SV, tw_lp * lp)
   TWAppStats.Prey_out += SV->Prey_out;
 }
 
-void
-CellStatistics_Compute(struct CellStatistics *CS)
+/*Calculate Cell Statistics*/
+void CellStatistics_Compute(struct CellStatistics *CS)
 {
-  /*Calculate the average amout for statistics*/
   CS->Avg_Pred_amount = ((double) CS->Predator) / ((double) (NUM_CELLS_X*NUM_CELLS_Y));
   CS->Avg_Prey_amount = ((double) CS->Prey) / ((double) (NUM_CELLS_X*NUM_CELLS_Y));
   CS->Avg_Pred_in = ((double) CS->Predator_in) / ((double) (NUM_CELLS_X*NUM_CELLS_Y));
@@ -304,8 +302,8 @@ CellStatistics_Compute(struct CellStatistics *CS)
   CS->Avg_Prey_out = ((double) CS->Prey_out) / ((double) (NUM_CELLS_X*NUM_CELLS_Y));
 }
 
-void
-CellStatistics_Print(struct CellStatistics *CS)
+/*Print Cell Statistics*/
+void CellStatistics_Print(struct CellStatistics *CS)
 {
   printf("Total Grass Amount ................................%d\n",
 	 CS->Grass);
@@ -389,10 +387,6 @@ int main(int argc, char **argv)
   tw_lpid         num_cells_per_kp, vp_per_proc;
   unsigned int    additional_memory_buffers;
 
-  // printf("Enter TWnpe, TWnkp, additional_memory_buffers \n" );
-  // scanf("%d %d %d",
-  //	&TWnpe, &TWnkp, &additional_memory_buffers );
-
   tw_init(&argc, &argv);
 
   nlp_per_pe = (NUM_CELLS_X * NUM_CELLS_Y) / (tw_nnodes() * g_tw_npe);
@@ -440,16 +434,6 @@ int main(int argc, char **argv)
   /*
    * Initialize App Stats Structure
    */
-  //TWAppStats.Call_Attempts = 0;
-  //TWAppStats.Call_Attempts = 0;
-  //TWAppStats.Channel_Blocks = 0;
-  //TWAppStats.Busy_Lines = 0;
-  //TWAppStats.Handoff_Blocks = 0;
-  //TWAppStats.Portables_In = 0;
-  //TWAppStats.Portables_Out = 0;
-  //TWAppStats.Blocking_Probability = 0.0;
-
-  //PP MODEL STATS
   TWAppStats.Grass = 0;
   TWAppStats.Predator = 0;
   TWAppStats.Prey = 0;
