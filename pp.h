@@ -20,8 +20,8 @@ typedef int     MethodName_t;
 
 // CASE_NAME [case number]
 #define UPDATE_METHOD 0
-#define PREY_DIE 1
-#define PREDATOR_DIE 2
+#define PREDATOR_MSG 1
+#define PREY_MSG 2
 
 #define CELL_TICK 1.0
 
@@ -31,32 +31,39 @@ typedef int     MethodName_t;
 number of predators, number of prey, number of grass */
 struct State
 {
-	double          Const_State_1;
-	int             Const_State_2;
-	int             Normal_Channels;
-	int             Reserve_Channels;
-	int             Portables_In;
-	int             Portables_Out;
-	int             Call_Attempts;
-	int             Channel_Blocks;
-	int             Busy_Lines;
-	int             Handoff_Blocks;
+	//int             Normal_Channels;
+	//int             Reserve_Channels;
+	//int             Portables_In;
+	//int             Portables_Out;
+	//int             Call_Attempts;
+	//int             Channel_Blocks;
+	//int             Busy_Lines;
+	//int             Handoff_Blocks;
 	int             CellLocationX;
 	int             CellLocationY;
 	//initializing Predator, Prey, Grass
 	int 	Predator;
 	int 	Prey;
 	int 	Grass;
+	//Statistics
+	int 	Predator_in;
+	int 	Predator_out;
+	int 	Prey_in;
+	int 	Prey_out;
 };
 
 /* reverse computing */ 
 struct RC
 {
-	int             wl1;	
+	//int             wl1;	
 	//Reverse compute Predator, Prey, Grass
 	int 	Predator;
 	int 	Prey;
 	int 	Grass;
+	int 	Predator_in;
+	int 	Predator_out;
+	int 	Prey_in;
+	int 	Prey_out;
 };
 
 /* ex. when prey or predator leaves space - send message
@@ -75,17 +82,28 @@ struct Msg_Data
 ex. number of predator that died, number of prey that died */ 
 struct CellStatistics
 {
-	int             Call_Attempts;
-	int             Channel_Blocks;
-	int             Busy_Lines;
-	int             Handoff_Blocks;
-	int             Portables_In;
-	int             Portables_Out;
-	double          Blocking_Probability;
+	//int             Call_Attempts;
+	//int             Channel_Blocks;
+	//int             Busy_Lines;
+	//int             Handoff_Blocks;
+	//int             Portables_In;
+	//int             Portables_Out;
+	//double          Blocking_Probability;
 
   //add statistic variables to print here
-        int             Grass;
-  
+    int             Grass;
+    int 			Predator;
+    int 			Prey;
+    int 			Predator_in;
+  	int 			Predator_out;
+  	int 			Prey_in;
+  	int 			Prey_out;
+  	double 			Avg_Pred_amount;
+  	double 			Avg_Prey_amount;
+  	double 			Avg_Pred_in;
+  	double 			Avg_Pred_out;
+  	double 			Avg_Prey_in;
+  	double 			Avg_Prey_out;
 };
 
 /* event handlers 

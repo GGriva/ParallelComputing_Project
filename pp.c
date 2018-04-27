@@ -1,19 +1,23 @@
 #include "pp.h"
 
+//global variables
 tw_lpid g_vp_per_proc =0; // set in main
 tw_lpid g_cells_per_vp_x = NUM_CELLS_X/NUM_VP_X;
 tw_lpid g_cells_per_vp_y = NUM_CELLS_Y/NUM_VP_Y;
 tw_lpid g_cells_per_vp = (NUM_CELLS_X/NUM_VP_X)*(NUM_CELLS_Y/NUM_VP_Y);
 
+/*Determine the neighbor lp-id in a designated direction*/
 tw_lpid Cell_ComputeMove( tw_lpid lpid, int direction )
 {
-  tw_lpid lpid_x, lpid_y;
-  tw_lpid n_x, n_y;
-  tw_lpid dest_lpid;
+  tw_lpid lpid_x, lpid_y; //initialize x and y coordinates for current lp 
+  tw_lpid n_x, n_y; //initialize delta-x and delta-y of neighbor lp
+  tw_lpid dest_lpid; //initalize destination lp
 
+  //determine x and y coordinates for current lp
   lpid_y = lpid / NUM_CELLS_X;
   lpid_x = lpid - (lpid_y * NUM_CELLS_X);
 
+  /*switch statement to set delta-x and delta-y depending on direction*/
   switch( direction )
     {
     case 0: // SOUTH
@@ -39,12 +43,12 @@ tw_lpid Cell_ComputeMove( tw_lpid lpid, int direction )
     default:
       tw_error( TW_LOC, "Bad direction value \n");
     }
-
+  //calculate destination lp based on current lp and delta-x / delta-y
   dest_lpid = (tw_lpid) (n_x + (n_y * NUM_CELLS_X));
-  // printf("ComputeMove: Src LP %llu (%d, %d), Dir %u, Dest LP %llu (%d, %d)\n", lpid, lpid_x, lpid_y, direction, dest_lpid, n_x, n_y);
   return( dest_lpid );
 }
 
+/*Cell Mapping of LP to PE*/
 tw_peid CellMapping_lp_to_pe(tw_lpid lpid)
 {
   long lp_x = lpid % NUM_CELLS_X;
@@ -56,6 +60,7 @@ tw_peid CellMapping_lp_to_pe(tw_lpid lpid)
   return peid;
 }
 
+/*Cell Mapping to LP*/
 tw_lp *CellMapping_to_lp(tw_lpid lpid)
 {
   tw_lpid lp_x = lpid % NUM_CELLS_X; //lpid -> (lp_x,lp_y)
@@ -77,6 +82,7 @@ tw_lp *CellMapping_to_lp(tw_lpid lpid)
   return g_tw_lp[index];
 }
 
+/*Cell Mapping to Local Index*/
 tw_lpid CellMapping_to_local_index(tw_lpid lpid)
 {
   tw_lpid lp_x = lpid % NUM_CELLS_X; //lpid -> (lp_x,lp_y)
@@ -96,31 +102,25 @@ tw_lpid CellMapping_to_local_index(tw_lpid lpid)
   return( index );
 }
 
+/*Cell Initalization*/
 void Cell_Init(struct State *SV, tw_lp * lp)
-{
-  tw_lpid currentcell = 0, newcell = 0;
-  int             i, dest_index = 0;
-  tw_stime          ts;
-
+{ 
+  tw_stime  ts; //initialze delta-t
+  
   struct Msg_Data TMsg;
   struct Msg_Data * TWMsg;
   tw_event *CurEvent;
 
-  SV->Normal_Channels = 0;
-  SV->Reserve_Channels = 0;
-  SV->Portables_In = 0;
-  SV->Portables_Out = 0;
-  SV->Call_Attempts = 0;
-  SV->Channel_Blocks = 0;
-  SV->Handoff_Blocks = 0;
-  SV->Busy_Lines = 0;
-  SV->Handoff_Blocks = 0;
+  //Initialzie all state variables
   SV->CellLocationX = lp->gid % NUM_CELLS_X;
   SV->CellLocationY = lp->gid / NUM_CELLS_X;
-  //setting initial Predator, Prey, Grass
-  SV->Predator = 50;
-  SV->Prey = 100;
-  SV->Grass = 1000;
+  SV->Predator = tw_rand_integer(lp->rng, 40, 60);
+  SV->Prey = tw_rand_integer(lp->rng, 40, 60);
+  SV->Grass = tw_rand_integer(lp->rng, 40, 60);
+  SV->Predator_in = 0;
+  SV->Predator_out = 0;
+  SV->Prey_in = 0;
+  SV->Prey_out = 0;
 
   if (SV->CellLocationX >= NUM_CELLS_X ||
       SV->CellLocationY >= NUM_CELLS_Y)
@@ -129,6 +129,7 @@ void Cell_Init(struct State *SV, tw_lp * lp)
 	       SV->CellLocationX, SV->CellLocationY);
     }
 
+  //send message for first evet
   ts = tw_rand_exponential(lp->rng, CELL_TICK);
   CurEvent = tw_event_new(lp->gid, ts, lp);
   TWMsg = tw_event_data(CurEvent);
@@ -136,34 +137,86 @@ void Cell_Init(struct State *SV, tw_lp * lp)
   tw_event_send(CurEvent);
 }
 
-
-void
-Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp * lp)
+/*Event Handler*/
+void Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp * lp)
 {
   *(int *)CV = (int)0;
-  M->RC.wl1 = 0;
   tw_stime          ts;
   struct Msg_Data * TWMsg;
-  tw_event *CurEvent;
+  tw_event *CurEvent; //current event
+  tw_event *UpdateAnimal; //update an animal
+  int dest_index = 0; //initialize the destination index
+  tw_lpid dest_lpid; //initialize the destination lp
 
   switch (M->MethodName)
     {
     case UPDATE_METHOD:
+      /*Evaluate the cell - each tick*/
+
+      //If Num. Prey 2x > Num. Predator - divide Num. Prey by 2
+      if (SV->Predator / SV->Prey > 2) 
+      {
+          SV->Prey = SV->Prey/2;
+      }
+      //Else if Num. Predator 2x > Num. Prey - divide Num. Predator by 2
+      else if (SV->Prey / SV->Predator > 2) 
+      {
+          SV->Predator = SV->Predator/2;
+      }
+      //Increment grass by 50
+      SV->Grass += 50; 
+
+      //Determine a direction to go (based on rng)
+      dest_index = tw_rand_integer(lp->rng, 0, 3);
+      dest_lpid = Cell_ComputeMove(lp->gid, dest_index);
+
+      //If num. pred > num prey - send predator to random direction
+      if (SV->Predator > SV->Prey) 
+      {
+        //Send Predator Message
+        ts = tw_rand_exponential(lp->rng, CELL_TICK);
+        UpdateAnimal = tw_event_new(dest_lpid, ts, lp);
+        TWMsg = tw_event_data(UpdateAnimal); 
+        TWMsg->MethodName = PREDATOR_MSG;
+        tw_event_send(UpdateAnimal);
+        //Decrement the predator that left
+        SV->Predator --; 
+        //Increment the counter variable for num. predators out of cell
+        SV->Predator_out++; 
+      }
+      //Else num. prey > num pred - send pray to random direction
+      else
+      {
+        //Send Prey Message
+        ts = tw_rand_exponential(lp->rng, CELL_TICK);
+        UpdateAnimal = tw_event_new(dest_lpid, ts, lp);
+        TWMsg = tw_event_data(UpdateAnimal);
+        TWMsg->MethodName = PREY_MSG;
+        tw_event_send(UpdateAnimal);
+        //Decrement the prey that left
+        SV->Prey--;
+        //Increment the counter variable for num. prey out of cell
+        SV->Prey_out++;
+      }
+
+      //Update Self
       ts = tw_rand_exponential(lp->rng, CELL_TICK);
       CurEvent = tw_event_new(lp->gid, ts, lp);
       TWMsg = tw_event_data(CurEvent);
       TWMsg->MethodName = UPDATE_METHOD;
       tw_event_send(CurEvent);
-      //update Grass each tick
-      SV->Grass += 50;
       break;
 
-    case PREY_DIE:
-      if (SV->Predator > SV->Prey) SV->Prey-=1;
+    case PREDATOR_MSG:
+      //Processes Predator Message
+      SV->Predator++; //increment number of predator
+      SV->Predator_in++; //increment counter for number of predator in cell
       break;
 
-    case PREDATOR_DIE:
-      if (SV->Prey == 0) SV->Predator-=1;
+    case PREY_MSG:
+      //Process Prey Message
+      SV->Prey++; //increment number of prey
+      SV->Prey_in++; //increment counter for number of prey in cell
       break;
 
     default:
@@ -172,9 +225,8 @@ Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp * lp)
     }
 }
 
-
-void
-RC_Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp * lp)
+/*Reverse Computation Event Handler*/
+void RC_Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp * lp)
 {
 #ifdef LPTRACEON
   long            seeds[4];
@@ -183,62 +235,96 @@ RC_Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp * l
   switch (M->MethodName)
     {
     case UPDATE_METHOD:
+      if (SV->Predator / SV->Prey > 2) 
+        {
+          //Reverse the number of prey / 2
+          SV->Prey = SV->Prey*2;
+        }
+      else if (SV->Prey / SV->Predator > 2) 
+        {
+          //Reverse the number of predator / 2
+          SV->Predator = SV->Predator*2;
+        }
+      //Reverse the increment of grass
+      SV->Grass -= 50; 
+
+      if (SV->Predator > SV->Prey) 
+        {
+          //Reverse the send predator
+          SV->Predator_out--;
+          SV->Predator++;
+        }
+      else 
+      {
+        //Reverse the send prey
+        SV->Prey_out--;
+        SV->Prey++;
+      }
+      //Reverse both random number generator calls
       tw_rand_reverse_unif(lp->rng);
-      SV->Grass -= 50;
+      tw_rand_reverse_unif(lp->rng);
       break;
 
-    case PREY_DIE:
-      SV->Prey+=1;
+    case PREDATOR_MSG:
+      //reverse receiving predator message
+      SV->Predator--;
+      SV->Predator_in--;
       break;
 
-    case PREDATOR_DIE:
-      SV->Predator+=1;
+    case PREY_MSG:
+      //reverse receiving prey message
+      SV->Prey--;
+      SV->Prey_in--;
       break;
     }
 }
 
-void
-CellStatistics_CollectStats(struct State *SV, tw_lp * lp)
+/*Calculate Global Statistics*/
+void CellStatistics_CollectStats(struct State *SV, tw_lp * lp)
 {
-  // need to implement - used below as example
-  TWAppStats.Call_Attempts += SV->Call_Attempts;
-  TWAppStats.Channel_Blocks += SV->Channel_Blocks;
-  TWAppStats.Busy_Lines += SV->Busy_Lines;
-  TWAppStats.Handoff_Blocks += SV->Handoff_Blocks;
-  TWAppStats.Portables_In += SV->Portables_In;
-  TWAppStats.Portables_Out += SV->Portables_Out;
-
-  //PP STATS
+  //Collect Global Statistics
   TWAppStats.Grass += SV->Grass;
+  TWAppStats.Predator += SV->Predator;
+  TWAppStats.Prey += SV->Prey;
+  TWAppStats.Predator_in += SV->Predator_in;
+  TWAppStats.Predator_out += SV->Predator_out;
+  TWAppStats.Prey_in += SV->Prey_in;
+  TWAppStats.Prey_out += SV->Prey_out;
 }
 
 void
 CellStatistics_Compute(struct CellStatistics *CS)
 {
-  //  CS->Blocking_Probability = ((double)CS->Channel_Blocks + (double)CS->Handoff_Blocks) / ((double)CS->Call_Attempts - (double)CS->Busy_Lines);
-  // Need to implement
+  /*Calculate the average amout for statistics*/
+  CS->Avg_Pred_amount = ((double) CS->Predator) / ((double) (NUM_CELLS_X*NUM_CELLS_Y));
+  CS->Avg_Prey_amount = ((double) CS->Prey) / ((double) (NUM_CELLS_X*NUM_CELLS_Y));
+  CS->Avg_Pred_in = ((double) CS->Predator_in) / ((double) (NUM_CELLS_X*NUM_CELLS_Y));
+  CS->Avg_Pred_out = ((double) CS->Predator_out) / ((double) (NUM_CELLS_X*NUM_CELLS_Y));
+  CS->Avg_Prey_in = ((double) CS->Prey_in) / ((double) (NUM_CELLS_X*NUM_CELLS_Y));
+  CS->Avg_Prey_out = ((double) CS->Prey_out) / ((double) (NUM_CELLS_X*NUM_CELLS_Y));
 }
 
 void
 CellStatistics_Print(struct CellStatistics *CS)
 {
-  printf("Call Attempts......................................%d\n",
-	 CS->Call_Attempts);
-  printf("Channel Blocks.....................................%d\n",
-	 CS->Channel_Blocks);
-  printf("Busy Lines.........................................%d\n",
-	 CS->Busy_Lines);
-  printf("Handoff Blocks.....................................%d\n",
-	 CS->Handoff_Blocks);
-  printf("Portables In.......................................%d\n",
-	 CS->Portables_In);
-  printf("Portables Out......................................%d\n",
-	 CS->Portables_Out);
-  printf("Blocking Probability...............................%f\n",
-	 CS->Blocking_Probability);
-  printf("*****************************************************\n");
-  printf("Grass..............................................%d\n",
+  printf("Total Grass Amount ................................%d\n",
 	 CS->Grass);
+  printf("Total Predator Amount .............................%d\n",
+    CS->Predator);
+  printf("Total Prey Amount .................................%d\n",
+    CS->Prey);
+  printf("Average Predator per cell..........................%f\n",
+    CS->Avg_Pred_amount);
+  printf("Average Prey per cell .............................%f\n",
+    CS->Avg_Prey_amount);
+  printf("Average Predator In-cell Movement .................%f\n",
+    CS->Avg_Pred_in);
+  printf("Average Predator Out-cell Movement ................%f\n",
+    CS->Avg_Pred_out);
+  printf("Average Prey In-cell Movement .....................%f\n",
+    CS->Avg_Prey_in);
+  printf("Average Prey Out-cell Movement ....................%f\n",
+    CS->Avg_Prey_out);
 }
 
 /******** Initialize_Appl *************************************************/
@@ -298,8 +384,7 @@ void pcs_grid_mapping()
     }
 }
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
   tw_lpid         num_cells_per_kp, vp_per_proc;
   unsigned int    additional_memory_buffers;
@@ -355,17 +440,29 @@ main(int argc, char **argv)
   /*
    * Initialize App Stats Structure
    */
-  TWAppStats.Call_Attempts = 0;
-  TWAppStats.Call_Attempts = 0;
-  TWAppStats.Channel_Blocks = 0;
-  TWAppStats.Busy_Lines = 0;
-  TWAppStats.Handoff_Blocks = 0;
-  TWAppStats.Portables_In = 0;
-  TWAppStats.Portables_Out = 0;
-  TWAppStats.Blocking_Probability = 0.0;
+  //TWAppStats.Call_Attempts = 0;
+  //TWAppStats.Call_Attempts = 0;
+  //TWAppStats.Channel_Blocks = 0;
+  //TWAppStats.Busy_Lines = 0;
+  //TWAppStats.Handoff_Blocks = 0;
+  //TWAppStats.Portables_In = 0;
+  //TWAppStats.Portables_Out = 0;
+  //TWAppStats.Blocking_Probability = 0.0;
 
   //PP MODEL STATS
   TWAppStats.Grass = 0;
+  TWAppStats.Predator = 0;
+  TWAppStats.Prey = 0;
+  TWAppStats.Predator_in = 0;
+  TWAppStats.Predator_out = 0;
+  TWAppStats.Prey_in = 0;
+  TWAppStats.Prey_out = 0;
+  TWAppStats.Avg_Pred_amount = 0.0;
+  TWAppStats.Avg_Prey_amount = 0.0;
+  TWAppStats.Avg_Pred_in = 0.0;
+  TWAppStats.Avg_Pred_out = 0.0;
+  TWAppStats.Avg_Prey_in = 0.0; 
+  TWAppStats.Avg_Prey_out = 0.0;
 
   
   tw_run();
