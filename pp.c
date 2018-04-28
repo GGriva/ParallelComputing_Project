@@ -1,4 +1,7 @@
 #include "pp.h"
+#include <math.h>
+
+#define MAGIC_VALUE 10
 
 //global variables
 tw_lpid g_vp_per_proc =0; // set in main
@@ -48,7 +51,7 @@ tw_lpid Cell_ComputeMove( tw_lpid lpid, int direction )
   return( dest_lpid );
 }
 
-/*Cell Mapping of LP to PE*/
+/*Cell Mapping of Logical Process to Processing Event*/
 tw_peid CellMapping_lp_to_pe(tw_lpid lpid)
 {
   long lp_x = lpid % NUM_CELLS_X;
@@ -153,16 +156,39 @@ void Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp *
     case UPDATE_METHOD:
       /*Evaluate the cell - each tick*/
 
-      //If Num. Prey 2x > Num. Predator - divide Num. Prey by 2
-      if (SV->Predator / SV->Prey > 2) 
+      if (SV->Prey <= 0)
       {
-          SV->Prey = SV->Prey/2;
+          SV->Predator -= MAGIC_VALUE; //starvation
       }
-      //Else if Num. Predator 2x > Num. Prey - divide Num. Predator by 2
-      else if (SV->Prey / SV->Predator > 2) 
+      else if (SV->Predator <= 0)
       {
-          SV->Predator = SV->Predator/2;
+          SV->Predator = 0; //Remains nothing
       }
+      //Prey 2x Predator
+      else if (SV->Prey / SV->Predator > 2)
+      {
+          SV->Prey -= MAGIC_VALUE; //eaten
+          SV->Predator += MAGIC_VALUE; //reproduction
+      }
+      //Predator 2x Prey
+      else if (SV->Predator / SV->Prey > 2)
+      {
+          SV->Predator -= MAGIC_VALUE; //Who ever doesn't eat, dies
+          SV->Prey -= MAGIC_VALUE;
+      }
+
+      //If more prey than grass
+      if(SV->Prey > SV->Grass)
+      {
+          SV->Prey -= MAGIC_VALUE; //who ever doesn't eat, dies
+          SV->Grass -= MAGIC_VALUE; //grass eaten
+      }
+      else
+      {
+          SV->Grass -= MAGIC_VALUE; //Prey eat Grass
+          SV->Prey += MAGIC_VALUE; //reproduction
+      }
+
       //Increment grass by 50
       SV->Grass += 50; 
 
@@ -235,16 +261,40 @@ void RC_Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_l
   switch (M->MethodName)
     {
     case UPDATE_METHOD:
-      if (SV->Predator / SV->Prey > 2) 
-        {
-          //Reverse the number of prey / 2
-          SV->Prey = SV->Prey*2;
-        }
-      else if (SV->Prey / SV->Predator > 2) 
-        {
-          //Reverse the number of predator / 2
-          SV->Predator = SV->Predator*2;
-        }
+      //Reverse life
+       if (SV->Prey <= 0)
+      {
+          SV->Predator += MAGIC_VALUE; //reverse starvation
+      }
+      else if (SV->Predator <= 0)
+      {
+          SV->Predator = 0; //Remains nothing
+      }
+      //Prey 2x Predator
+      else if (SV->Prey / SV->Predator > 2)
+      {
+          SV->Predator -= MAGIC_VALUE; //reverse reproduction
+          SV->Prey += MAGIC_VALUE; //reverse eaten
+      }
+      //Predator 2x Prey
+      else if (SV->Predator / SV->Prey > 2)
+      {
+          SV->Prey += MAGIC_VALUE; //bring prey back
+          SV->Predator += MAGIC_VALUE; //reverse death
+      }
+
+      //If more prey than grass
+      if(SV->Prey > SV->Grass)
+      {
+          SV->Grass += MAGIC_VALUE; //reverse eat
+          SV->Prey += MAGIC_VALUE; //reverse death
+      }
+      else
+      {
+          SV->Prey -= MAGIC_VALUE; //reverse reproduction
+          SV->Grass += MAGIC_VALUE; //reverse eat
+      }
+
       //Reverse the increment of grass
       SV->Grass -= 50; 
 
@@ -278,6 +328,8 @@ void RC_Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_l
       break;
     }
 }
+
+/****** Finalization Functions ******/
 
 /*Collect Global Statistics*/
 void CellStatistics_CollectStats(struct State *SV, tw_lp * lp)

@@ -64,11 +64,11 @@ struct Msg_Data
 /* Cell Statistics */ 
 struct CellStatistics
 {
-        int  	Grass;
-        int 	Predator;
-        int 	Prey;
-        int 	Predator_in;
-        int 	Predator_out;
+    int  	Grass;
+    int 	Predator;
+    int 	Prey;
+    int 	Predator_in;
+  	int 	Predator_out;
   	int 	Prey_in;
   	int 	Prey_out;
   	double 	Avg_Pred_amount;
