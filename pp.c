@@ -354,6 +354,33 @@ void CellStatistics_Compute(struct CellStatistics *CS)
   CS->Avg_Prey_out = ((double) CS->Prey_out) / ((double) (NUM_CELLS_X*NUM_CELLS_Y));
 }
 
+/*Reduce to the correct number of Prey/Predator/Grass in Rank 0*/
+void CellStatistics_Reduce(struct CellStatistics *CS)
+{
+  int reduce_arr[7];
+
+  reduce_arr[0] = CS->Grass;
+  reduce_arr[1] = CS->Predator;
+  reduce_arr[2] = CS->Prey;
+  reduce_arr[3] = CS->Predator_in;
+  reduce_arr[4] = CS->Predator_out;
+  reduce_arr[5] = CS->Prey_in;
+  reduce_arr[6] = CS->Prey_out;
+
+  int g_reduce_arr[7];
+
+  MPI_Reduce(&reduce_arr, &g_reduce_arr, 7,MPI_INT, MPI_SUM, 0,MPI_COMM_WORLD);
+
+  CS->Grass = g_reduce_arr[0];
+  CS->Predator = g_reduce_arr[1];
+  CS->Prey = g_reduce_arr[2];
+  CS->Predator_in = g_reduce_arr[3];
+  CS->Predator_out = g_reduce_arr[4];
+  CS->Prey_in = g_reduce_arr[5];
+  CS->Prey_out = g_reduce_arr[6];  
+
+}
+
 /*Print Cell Statistics*/
 void CellStatistics_Print(struct CellStatistics *CS)
 {
@@ -503,11 +530,17 @@ int main(int argc, char **argv)
   
   tw_run();
 
+  //Reduce to the correct number of Prey/Predator/Grass in Rank 0
+  CellStatistics_Reduce(&TWAppStats);
+
   if( tw_ismaster() )
     {
-      CellStatistics_Compute(&TWAppStats);
+      CellStatistics_Compute(&TWAppStats);    
       CellStatistics_Print(&TWAppStats);
     }
+
+
+
 
   tw_end();
 

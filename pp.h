@@ -3,16 +3,16 @@
 #define TW_MAX_NAME_LEN 31
 
 /* 2D grid */
-#define NUM_CELLS_X 32     //256
-#define NUM_CELLS_Y 32     //256
+#define NUM_CELLS_X 1024     //256
+#define NUM_CELLS_Y 1024     //256
 
 /* overlapping grid that divides 2D grid above into sections 
 each processor gets a section
 ex. splitting x and y in half creates four quadrants, 
 one quadrant for each processor */
 
-#define NUM_VP_X 4 
-#define NUM_VP_Y 4
+#define NUM_VP_X 256 
+#define NUM_VP_Y 256
 
 typedef int     Channel_t;
 typedef int     Min_t;
@@ -92,6 +92,7 @@ void         RC_Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data 
 void            CellStatistics_CollectStats(struct State *, tw_lp *lp);
 void            CellStatistics_Compute();
 void            CellStatistics_Print();
+void			CellStatistics_Reduce();
 
 /* Declare CellStats - make it global to the model */
 struct CellStatistics TWAppStats;
