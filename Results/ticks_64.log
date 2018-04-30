@@ -1,0 +1,321 @@
+/gpfs/u/scratch/PCP7/PCP7thrn/final/ross-build/models/pred-prey/./pp --synch=3 --end=64.0 --batch=4 --gvt-interval=256 
+
+Sun Apr 29 17:10:42 2018
+
+ROSS Revision: GITDIR-NOTFOUND
+
+tw_net_start: Found world size to be 1024 
+Running simulation with following configuration: 
+    Buffers Allocated Per PE = 18432
+
+
+
+
+/**********************************************/
+NUM CELLS X      = 1024
+NUM CELLS Y      = 1024
+CELL_TICK        = 1.000000
+NUM KPs per PE   = 64 
+NUM LPs per PE   = 1024 
+g_vp_per_proc    = 64 
+/**********************************************/
+
+
+
+ROSS Core Configuration: 
+	Total Nodes                                               1024
+	Total Processors                                   [Nodes (1024) x PE_per_Node (1)] 1024
+	Total KPs                                          [Nodes (1024) x KPs (64)] 65536
+	Total LPs                                              1048576
+	Simulation End Time                                      64.00
+	LP-to-PE Mapping                                   model defined
+
+
+ROSS Event Memory Allocation:
+	Model events                                             18433
+	Network events                                           50000
+	Total events                                             68432
+
+*** START PARALLEL OPTIMISTIC SIMULATION WITH SUSPEND LP FEATURE ***
+
+GVT #2: simulation 2% complete, max event queue size 1855 (GVT = 1.7934).
+AVL tree size: 156
+GVT #3: simulation 3% complete, max event queue size 1924 (GVT = 2.3167).
+AVL tree size: 165
+GVT #4: simulation 4% complete, max event queue size 2025 (GVT = 2.8017).
+AVL tree size: 200
+GVT #5: simulation 5% complete, max event queue size 2030 (GVT = 3.2796).
+AVL tree size: 204
+GVT #6: simulation 5% complete, max event queue size 2050 (GVT = 3.7854).
+AVL tree size: 207
+GVT #7: simulation 6% complete, max event queue size 2050 (GVT = 4.2865).
+AVL tree size: 206
+GVT #8: simulation 7% complete, max event queue size 2050 (GVT = 4.7953).
+AVL tree size: 196
+GVT #9: simulation 8% complete, max event queue size 2057 (GVT = 5.2646).
+AVL tree size: 194
+GVT #11: simulation 9% complete, max event queue size 2081 (GVT = 6.2581).
+AVL tree size: 224
+GVT #12: simulation 10% complete, max event queue size 2081 (GVT = 6.7371).
+AVL tree size: 217
+GVT #13: simulation 11% complete, max event queue size 2081 (GVT = 7.2371).
+AVL tree size: 229
+GVT #14: simulation 12% complete, max event queue size 2081 (GVT = 7.7349).
+AVL tree size: 235
+GVT #16: simulation 13% complete, max event queue size 2096 (GVT = 8.7053).
+AVL tree size: 228
+GVT #17: simulation 14% complete, max event queue size 2106 (GVT = 9.1895).
+AVL tree size: 232
+GVT #18: simulation 15% complete, max event queue size 2106 (GVT = 9.6810).
+AVL tree size: 253
+GVT #20: simulation 16% complete, max event queue size 2106 (GVT = 10.6751).
+AVL tree size: 216
+GVT #21: simulation 17% complete, max event queue size 2106 (GVT = 11.1589).
+AVL tree size: 245
+GVT #22: simulation 18% complete, max event queue size 2106 (GVT = 11.6437).
+AVL tree size: 238
+GVT #24: simulation 19% complete, max event queue size 2106 (GVT = 12.6488).
+AVL tree size: 226
+GVT #25: simulation 20% complete, max event queue size 2106 (GVT = 13.1557).
+AVL tree size: 236
+GVT #26: simulation 21% complete, max event queue size 2106 (GVT = 13.6516).
+AVL tree size: 228
+GVT #27: simulation 22% complete, max event queue size 2106 (GVT = 14.1511).
+AVL tree size: 236
+GVT #29: simulation 23% complete, max event queue size 2106 (GVT = 15.1409).
+AVL tree size: 214
+GVT #30: simulation 24% complete, max event queue size 2106 (GVT = 15.6239).
+AVL tree size: 191
+GVT #31: simulation 25% complete, max event queue size 2106 (GVT = 16.1282).
+AVL tree size: 205
+GVT #33: simulation 26% complete, max event queue size 2106 (GVT = 17.1089).
+AVL tree size: 219
+GVT #34: simulation 27% complete, max event queue size 2106 (GVT = 17.6001).
+AVL tree size: 239
+GVT #35: simulation 28% complete, max event queue size 2106 (GVT = 18.0861).
+AVL tree size: 213
+GVT #36: simulation 29% complete, max event queue size 2106 (GVT = 18.5834).
+AVL tree size: 209
+GVT #38: simulation 30% complete, max event queue size 2106 (GVT = 19.5774).
+AVL tree size: 218
+GVT #39: simulation 31% complete, max event queue size 2106 (GVT = 20.0585).
+AVL tree size: 225
+GVT #40: simulation 32% complete, max event queue size 2106 (GVT = 20.5669).
+AVL tree size: 223
+GVT #42: simulation 33% complete, max event queue size 2112 (GVT = 21.5791).
+AVL tree size: 215
+GVT #43: simulation 34% complete, max event queue size 2115 (GVT = 22.0546).
+AVL tree size: 205
+GVT #44: simulation 35% complete, max event queue size 2116 (GVT = 22.5647).
+AVL tree size: 225
+GVT #46: simulation 36% complete, max event queue size 2116 (GVT = 23.5510).
+AVL tree size: 241
+GVT #47: simulation 37% complete, max event queue size 2116 (GVT = 24.0322).
+AVL tree size: 241
+GVT #48: simulation 38% complete, max event queue size 2116 (GVT = 24.5255).
+AVL tree size: 248
+GVT #49: simulation 39% complete, max event queue size 2116 (GVT = 25.0371).
+AVL tree size: 242
+GVT #51: simulation 40% complete, max event queue size 2116 (GVT = 26.0077).
+AVL tree size: 242
+GVT #52: simulation 41% complete, max event queue size 2116 (GVT = 26.5270).
+AVL tree size: 254
+GVT #53: simulation 42% complete, max event queue size 2116 (GVT = 27.0166).
+AVL tree size: 253
+GVT #55: simulation 43% complete, max event queue size 2116 (GVT = 28.0084).
+AVL tree size: 232
+GVT #56: simulation 44% complete, max event queue size 2116 (GVT = 28.5096).
+AVL tree size: 222
+GVT #57: simulation 45% complete, max event queue size 2116 (GVT = 28.9773).
+AVL tree size: 229
+GVT #58: simulation 46% complete, max event queue size 2116 (GVT = 29.4608).
+AVL tree size: 235
+GVT #60: simulation 47% complete, max event queue size 2116 (GVT = 30.4482).
+AVL tree size: 225
+GVT #61: simulation 48% complete, max event queue size 2116 (GVT = 30.9483).
+AVL tree size: 221
+GVT #62: simulation 49% complete, max event queue size 2116 (GVT = 31.4616).
+AVL tree size: 221
+GVT #64: simulation 50% complete, max event queue size 2116 (GVT = 32.4338).
+AVL tree size: 224
+GVT #65: simulation 51% complete, max event queue size 2116 (GVT = 32.9296).
+AVL tree size: 229
+GVT #66: simulation 52% complete, max event queue size 2116 (GVT = 33.4055).
+AVL tree size: 234
+GVT #68: simulation 53% complete, max event queue size 2116 (GVT = 34.3951).
+AVL tree size: 255
+GVT #69: simulation 54% complete, max event queue size 2116 (GVT = 34.8823).
+AVL tree size: 265
+GVT #70: simulation 55% complete, max event queue size 2116 (GVT = 35.3663).
+AVL tree size: 260
+GVT #72: simulation 56% complete, max event queue size 2116 (GVT = 36.3078).
+AVL tree size: 255
+GVT #73: simulation 57% complete, max event queue size 2116 (GVT = 36.8162).
+AVL tree size: 255
+GVT #74: simulation 58% complete, max event queue size 2116 (GVT = 37.3059).
+AVL tree size: 258
+GVT #75: simulation 59% complete, max event queue size 2116 (GVT = 37.8267).
+AVL tree size: 256
+GVT #77: simulation 60% complete, max event queue size 2116 (GVT = 38.8258).
+AVL tree size: 248
+GVT #78: simulation 61% complete, max event queue size 2116 (GVT = 39.3234).
+AVL tree size: 257
+GVT #79: simulation 62% complete, max event queue size 2116 (GVT = 39.8252).
+AVL tree size: 250
+GVT #80: simulation 63% complete, max event queue size 2116 (GVT = 40.3390).
+AVL tree size: 254
+GVT #82: simulation 64% complete, max event queue size 2137 (GVT = 41.2987).
+AVL tree size: 251
+GVT #83: simulation 65% complete, max event queue size 2137 (GVT = 41.8102).
+AVL tree size: 243
+GVT #84: simulation 66% complete, max event queue size 2137 (GVT = 42.3400).
+AVL tree size: 245
+GVT #86: simulation 67% complete, max event queue size 2137 (GVT = 43.3544).
+AVL tree size: 229
+GVT #87: simulation 68% complete, max event queue size 2137 (GVT = 43.8550).
+AVL tree size: 260
+GVT #88: simulation 69% complete, max event queue size 2137 (GVT = 44.3562).
+AVL tree size: 233
+GVT #89: simulation 70% complete, max event queue size 2137 (GVT = 44.8555).
+AVL tree size: 237
+GVT #91: simulation 71% complete, max event queue size 2137 (GVT = 45.8363).
+AVL tree size: 255
+GVT #92: simulation 72% complete, max event queue size 2137 (GVT = 46.3490).
+AVL tree size: 247
+GVT #93: simulation 73% complete, max event queue size 2137 (GVT = 46.8108).
+AVL tree size: 258
+GVT #95: simulation 74% complete, max event queue size 2137 (GVT = 47.8152).
+AVL tree size: 249
+GVT #96: simulation 75% complete, max event queue size 2137 (GVT = 48.2908).
+AVL tree size: 226
+GVT #97: simulation 76% complete, max event queue size 2137 (GVT = 48.8044).
+AVL tree size: 225
+GVT #98: simulation 77% complete, max event queue size 2137 (GVT = 49.3144).
+AVL tree size: 225
+GVT #100: simulation 78% complete, max event queue size 2137 (GVT = 50.3169).
+AVL tree size: 236
+GVT #101: simulation 79% complete, max event queue size 2137 (GVT = 50.8282).
+AVL tree size: 238
+GVT #102: simulation 80% complete, max event queue size 2137 (GVT = 51.3293).
+AVL tree size: 232
+GVT #104: simulation 81% complete, max event queue size 2137 (GVT = 52.3202).
+AVL tree size: 232
+GVT #105: simulation 82% complete, max event queue size 2137 (GVT = 52.8092).
+AVL tree size: 228
+GVT #106: simulation 83% complete, max event queue size 2137 (GVT = 53.3292).
+AVL tree size: 227
+GVT #107: simulation 84% complete, max event queue size 2137 (GVT = 53.8221).
+AVL tree size: 218
+GVT #109: simulation 85% complete, max event queue size 2137 (GVT = 54.8039).
+AVL tree size: 218
+GVT #110: simulation 86% complete, max event queue size 2137 (GVT = 55.2694).
+AVL tree size: 224
+GVT #111: simulation 87% complete, max event queue size 2137 (GVT = 55.7539).
+AVL tree size: 235
+GVT #113: simulation 88% complete, max event queue size 2137 (GVT = 56.7599).
+AVL tree size: 243
+GVT #114: simulation 89% complete, max event queue size 2137 (GVT = 57.2513).
+AVL tree size: 234
+GVT #115: simulation 90% complete, max event queue size 2137 (GVT = 57.7324).
+AVL tree size: 250
+GVT #116: simulation 91% complete, max event queue size 2137 (GVT = 58.2470).
+AVL tree size: 249
+GVT #118: simulation 92% complete, max event queue size 2137 (GVT = 59.2765).
+AVL tree size: 253
+GVT #119: simulation 93% complete, max event queue size 2137 (GVT = 59.7576).
+AVL tree size: 235
+GVT #120: simulation 94% complete, max event queue size 2137 (GVT = 60.2393).
+AVL tree size: 234
+GVT #122: simulation 95% complete, max event queue size 2137 (GVT = 61.2274).
+AVL tree size: 232
+GVT #123: simulation 96% complete, max event queue size 2137 (GVT = 61.7255).
+AVL tree size: 236
+GVT #124: simulation 97% complete, max event queue size 2137 (GVT = 62.2062).
+AVL tree size: 198
+GVT #126: simulation 98% complete, max event queue size 2137 (GVT = 63.1787).
+AVL tree size: 154
+GVT #127: simulation 99% complete, max event queue size 2137 (GVT = 63.6757).
+AVL tree size: 107
+GVT #130: simulation 100% complete, max event queue size 2137 (GVT = MAX).
+AVL tree size: 11
+*** END SIMULATION ***
+
+
+	: Running Time = 2.3012 seconds
+
+TW Library Statistics:
+	Total Events Processed                               133838466
+	Events Aborted (part of RBs)                                 0
+	Events Rolled Back                                      683175
+	Event Ties Detected in PE Queues                             0
+	Efficiency                                               99.49 %
+	Total Remote (shared mem) Events Processed                   0
+	Percent Remote Events                                     0.00 %
+	Total Remote (network) Events Processed                8385327
+	Percent Remote Events                                     6.30 %
+
+	Total Roll Backs                                        241910
+	Primary Roll Backs                                      237029
+	Secondary Roll Backs                                      4881
+	Fossil Collect Attempts                                 134144
+	Total GVT Computations                                     131
+
+	Net Events Processed                                 133155291
+	Event Rate (events/sec)                             57863742.1
+	Total Events Scheduled Past End Time                   2110476
+
+TW Memory Statistics:
+	Events Allocated                                         68433
+	Memory Allocated                                         57958
+	Memory Wasted                                             1156
+
+TW Network Statistics:
+	Remote sends                                           8551161
+	Remote recvs                                           8551161
+
+TW Data Structure sizes in bytes (sizeof):
+	PE struct                                                  608
+	KP struct                                                  144
+	LP struct                                                  128
+	LP Model struct                                             36
+	LP RNGs                                                     80
+	Total LP                                                   244
+	Event struct                                               152
+	Event struct with Model                                    156
+
+TW Clock Cycle Statistics (MAX values in secs at 1.0000 GHz):
+	Priority Queue (enq/deq)                                0.0618
+	AVL Tree (insert/delete)                                0.0618
+	LZ4 (de)compression                                     0.0000
+	Buddy system                                            0.0000
+	Event Processing                                        1.8883
+	Event Cancel                                            0.0036
+	Event Abort                                             0.0000
+
+	GVT                                                     0.5321
+	Fossil Collect                                          0.3770
+	Primary Rollbacks                                       0.0292
+	Network Read                                            0.8238
+	Statistics Computation                                  0.0000
+	Statistics Write                                        0.0000
+	Total Time (Note: Using Running Time above for Speedup)      3.6819
+
+TW GVT Statistics: MPI AllReduce
+	GVT Interval                                               256
+	GVT Real Time Interval (cycles)                    0
+	GVT Real Time Interval (sec)                        0.00000000
+	Batch Size                                                   4
+
+	Forced GVT                                                   0
+	Total GVT Computations                                     131
+	Total All Reduce Calls                                     393
+	Average Reduction / GVT                                   3.00
+Total Grass Amount ................................-1001776822
+Total Predator Amount .............................19274475
+Total Prey Amount .................................56332567
+Average Predator per cell..........................18.381572
+Average Prey per cell .............................53.722922
+Average Predator In-cell Movement .................0.262628
+Average Predator Out-cell Movement ................0.259580
+Average Prey In-cell Movement .....................62.731668
+Average Prey Out-cell Movement ....................63.732905
