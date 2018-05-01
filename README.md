@@ -1,6 +1,6 @@
 # ParallelComputing_Project
 
-Run the project on kratos as 
+Run the project on kratos with command line:
 
   "mpirun -np 4 ./pp --synch=3 --end=32.0 --batch=4 --gvt-interval=256"
   
