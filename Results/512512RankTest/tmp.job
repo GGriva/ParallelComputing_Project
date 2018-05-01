@@ -1,0 +1,6 @@
+#!/bin/sh
+#SBATCH --partition medium  --nodes 128  --time 30 
+#srun --ntasks 256  --overcommit -o 256.log /gpfs/u/home/PCP7/PCP7adhb/scratch/Final/ROSS-build/models/ROSS-Models/PCFinal/pp --synch=3 --end=128.0 --batch=4 --gvt-interval=256 &
+#srun --ntasks 1024  --overcommit -o 1024.log /gpfs/u/home/PCP7/PCP7adhb/scratch/Final/ROSS-build/models/ROSS-Models/PCFinal/pp --synch=3 --end=128.0 --batch=4 --gvt-interval=256 &
+srun --ntasks 8192  --overcommit -o 8192.log /gpfs/u/home/PCP7/PCP7adhb/scratch/Final/ROSS-build/models/ROSS-Models/PCFinal/pp --synch=3 --end=128.0 --batch=4 --gvt-interval=256 &
+wait

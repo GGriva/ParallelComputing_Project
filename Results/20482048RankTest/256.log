@@ -1,0 +1,40 @@
+/gpfs/u/home/PCP7/PCP7adhb/scratch/Final/ROSS-build/models/ROSS-Models/PCFinal/pp --synch=3 --end=128.0 --batch=4 --gvt-interval=256 
+
+Tue May  1 00:14:26 2018
+
+ROSS Revision: c88bb454ca6141693389275829f11409a6776c87
+
+tw_net_start: Found world size to be 256 
+Running simulation with following configuration: 
+    Buffers Allocated Per PE = 264192
+
+
+
+
+/**********************************************/
+NUM CELLS X      = 2048
+NUM CELLS Y      = 2048
+CELL_TICK        = 1.000000
+NUM KPs per PE   = 256 
+NUM LPs per PE   = 16384 
+g_vp_per_proc    = 256 
+/**********************************************/
+
+
+
+ROSS Core Configuration: 
+	Total Nodes                                                256
+	Total Processors                                   [Nodes (256) x PE_per_Node (1)] 256
+	Total KPs                                          [Nodes (256) x KPs (256)] 65536
+	Total LPs                                              4194304
+	Simulation End Time                                     128.00
+	LP-to-PE Mapping                                   model defined
+
+
+ROSS Event Memory Allocation:
+	Model events                                            264193
+	Network events                                           50000
+	Total events                                            314192
+
+node: 0: error: /gpfs/u/home/PCP7/PCP7adhb/scratch/Final/ROSS/core/tw-kp.c:107: Cannot allocate 512000 bytes for 2000 tw_out (need total of 194014 KiB)
+Abort(1) on node 0 (rank 0 in comm 1140850688): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 0

@@ -1,0 +1,26 @@
+/gpfs/u/home/PCP7/PCP7adhb/scratch/Final/ROSS-build/models/ROSS-Models/PCFinal/pp --synch=3 --end=128.0 --batch=4 --gvt-interval=256 
+
+Sun Apr 29 20:13:10 2018
+
+ROSS Revision: c88bb454ca6141693389275829f11409a6776c87
+
+tw_net_start: Found world size to be 4096 
+Running simulation with following configuration: 
+    Buffers Allocated Per PE = 1109008
+
+
+
+
+/**********************************************/
+NUM CELLS X      = 16834
+NUM CELLS Y      = 16834
+CELL_TICK        = 1.000000
+NUM KPs per PE   = 16 
+NUM LPs per PE   = 69185 
+g_vp_per_proc    = 16 
+/**********************************************/
+
+
+node: 16: error: /gpfs/u/home/PCP7/PCP7adhb/scratch/Final/ROSS/core/tw-lp.c:63: LP already allocated: 0
+
+Abort(1) on node 16 (rank 16 in comm 1140850688): application called MPI_Abort(MPI_COMM_WORLD, 1) - process 16
