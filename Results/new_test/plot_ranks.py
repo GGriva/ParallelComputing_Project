@@ -12,7 +12,7 @@ for line in open(f_name):
 
 	x.append(float(sep[0]))
 	y.append(float(sep[1]))
-	z.append(float(sep[2]))
+	#z.append(float(sep[2]))
 
 #MPI Rank plots
 #plt.ylabel("Event Rate (Events per second)")
@@ -23,15 +23,23 @@ for line in open(f_name):
 #plt.xlabel("MPI ranks")
 
 #Tick Tests
-plt.ylabel("Average Per Cell")
-#plt.ylabel("Execution Time (seconds)")
-plt.xlabel("Number of Ticks")
+#plt.ylabel("Average Per Cell")
+# plt.ylabel("Execution Time (seconds)")
+# plt.xlabel("Number of Ticks")
 
-plt.xticks(x,map(int,x))
 
-#plt.plot(x, y, "-o")
-plt.plot(x, y, "-o", label="Predator")
-plt.plot(x, z, "-o", label="Prey")
+#Ratio
+plt.ylabel("Final Prey/Predator Ratio")
+plt.xlabel("Initial Prey/Predator Ratio")
+
+axes = plt.gca()
+axes.set_ylim([1,1.1])
+
+#plt.xticks(x,map(int,x))
+
+plt.plot(x, y, "-o")
+#plt.plot(x, y, "-o", label="Predator")
+#plt.plot(x, z, "-o", label="Prey")
 plt.legend()
 
 plt.show()

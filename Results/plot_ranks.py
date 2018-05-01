@@ -18,21 +18,32 @@ for line in open(f_name):
 #plt.ylabel("Event Rate (Events per second)")
 #plt.ylabel("Execution Time (seconds)")
 #plt.ylabel("Event Rollbacks")
-plt.ylabel("Total Rollbacks")
+#plt.ylabel("Total Rollbacks")
 #plt.ylabel("Percent Efficiency (%)")
-plt.xlabel("MPI ranks")
+#plt.xlabel("MPI ranks")
 
 #Tick Tests
 #plt.ylabel("Average Per Cell")
 #plt.ylabel("Execution Time (seconds)")
 #plt.xlabel("Number of Ticks")
 
-plt.xticks(x,map(int,x))
+
+#Ratio
+plt.ylabel("Final Prey/Predator Ratio")
+plt.xlabel("Initial Prey/Predator Ratio")
+
+
+#plt.xticks(x,map(int,x))
+
+axes = plt.gca()
+axes.set_ylim([0,4])
 
 plt.plot(x, y, "-o")
 #plt.plot(x, y, "-o", label="Predator")
 #plt.plot(x, z, "-o", label="Prey")
-plt.legend()
+#plt.legend()
+
+
 
 plt.show()
 

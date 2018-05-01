@@ -1,7 +1,7 @@
 #include "pp.h"
 #include <math.h>
 
-#define MAGIC_VALUE 10
+#define MAGIC_VALUE 1
 
 //global variables
 tw_lpid g_vp_per_proc =0; // set in main
@@ -63,7 +63,8 @@ tw_peid CellMapping_lp_to_pe(tw_lpid lpid)
   return peid;
 }
 
-/*Cell Mapping to LP*/
+
+/*This code was adapted from Prof. Carothers code in order to provide a Cell Mapping to LP*/
 tw_lp *CellMapping_to_lp(tw_lpid lpid)
 {
   tw_lpid lp_x = lpid % NUM_CELLS_X; //lpid -> (lp_x,lp_y)
@@ -85,7 +86,7 @@ tw_lp *CellMapping_to_lp(tw_lpid lpid)
   return g_tw_lp[index];
 }
 
-/*Cell Mapping to Local Index*/
+/*This code was adapted from Prof. Carothers code in order to provide a Cell Mapping to Local Index*/
 tw_lpid CellMapping_to_local_index(tw_lpid lpid)
 {
   tw_lpid lp_x = lpid % NUM_CELLS_X; //lpid -> (lp_x,lp_y)
@@ -105,7 +106,7 @@ tw_lpid CellMapping_to_local_index(tw_lpid lpid)
   return( index );
 }
 
-/*Cell Initalization*/
+/*Cell Initalization. Initializes the state */
 void Cell_Init(struct State *SV, tw_lp * lp)
 { 
   tw_stime  ts; //initialze delta-t
@@ -117,9 +118,9 @@ void Cell_Init(struct State *SV, tw_lp * lp)
   //Initialzie all state variables
   SV->CellLocationX = lp->gid % NUM_CELLS_X;
   SV->CellLocationY = lp->gid / NUM_CELLS_X;
-  SV->Predator = tw_rand_integer(lp->rng, 40, 60);
-  SV->Prey = tw_rand_integer(lp->rng, 40, 60);
-  SV->Grass = tw_rand_integer(lp->rng, 40, 60);
+  SV->Predator = tw_rand_integer(lp->rng, 4, 6);
+  SV->Prey = tw_rand_integer(lp->rng, 4, 6);
+  SV->Grass = tw_rand_integer(lp->rng, 4, 6);
   SV->Predator_in = 0;
   SV->Predator_out = 0;
   SV->Prey_in = 0;
@@ -140,7 +141,7 @@ void Cell_Init(struct State *SV, tw_lp * lp)
   tw_event_send(CurEvent);
 }
 
-/*Event Handler*/
+/*Event Handler - This function runs for every Cell event in the simulation*/
 void Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp * lp)
 {
   *(int *)CV = (int)0;
@@ -159,6 +160,7 @@ void Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp *
       if (SV->Prey <= 0)
       {
           SV->Predator -= MAGIC_VALUE; //starvation
+          SV->Prey = 0;
       }
       else if (SV->Predator <= 0)
       {
@@ -173,14 +175,14 @@ void Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp *
       //Predator 2x Prey
       else if (SV->Predator / SV->Prey > 2)
       {
-          SV->Predator -= MAGIC_VALUE; //Who ever doesn't eat, dies
-          SV->Prey -= MAGIC_VALUE;
+          SV->Predator -= MAGIC_VALUE; //Predator starvation
+          SV->Prey -= MAGIC_VALUE; //Prey eaten
       }
 
       //If more prey than grass
       if(SV->Prey > SV->Grass)
       {
-          SV->Prey -= MAGIC_VALUE; //who ever doesn't eat, dies
+          SV->Prey -= MAGIC_VALUE; //Prey Starvation
           SV->Grass -= MAGIC_VALUE; //grass eaten
       }
       else
@@ -189,8 +191,8 @@ void Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp *
           SV->Prey += MAGIC_VALUE; //reproduction
       }
 
-      //Increment grass by 50
-      SV->Grass += 50; 
+      //Increment grass by Magic value
+      SV->Grass += MAGIC_VALUE; 
 
       //Determine a direction to go (based on rng)
       dest_index = tw_rand_integer(lp->rng, 0, 3);
@@ -251,7 +253,7 @@ void Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp *
     }
 }
 
-/*Reverse Computation Event Handler*/
+/*Reverse Computation Event Handler - This is run whenever there is a rollback to reverse the event compuation*/
 void RC_Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_lp * lp)
 {
 #ifdef LPTRACEON
@@ -265,6 +267,7 @@ void RC_Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_l
        if (SV->Prey <= 0)
       {
           SV->Predator += MAGIC_VALUE; //reverse starvation
+          SV->Prey = 0;
       }
       else if (SV->Predator <= 0)
       {
@@ -296,7 +299,7 @@ void RC_Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_l
       }
 
       //Reverse the increment of grass
-      SV->Grass -= 50; 
+      SV->Grass -= MAGIC_VALUE; 
 
       if (SV->Predator > SV->Prey) 
         {
@@ -357,6 +360,8 @@ void CellStatistics_Compute(struct CellStatistics *CS)
 /*Reduce to the correct number of Prey/Predator/Grass in Rank 0*/
 void CellStatistics_Reduce(struct CellStatistics *CS)
 {
+
+  // Create array for each rank to reduce for the cell satistics
   int reduce_arr[7];
 
   reduce_arr[0] = CS->Grass;
@@ -369,8 +374,10 @@ void CellStatistics_Reduce(struct CellStatistics *CS)
 
   int g_reduce_arr[7];
 
+  // Puts the total number for each of the statistics in g_reduce_arr for rank 0
   MPI_Reduce(&reduce_arr, &g_reduce_arr, 7,MPI_INT, MPI_SUM, 0,MPI_COMM_WORLD);
 
+  // Update the total for rank 0
   CS->Grass = g_reduce_arr[0];
   CS->Predator = g_reduce_arr[1];
   CS->Prey = g_reduce_arr[2];
@@ -423,6 +430,7 @@ tw_lptype       mylps[] =
     {0},
   };
 
+/*This code was adapted from Prof. Carothers code in order to provide a pcs to a gird mapping*/
 void pcs_grid_mapping()
 {
   tw_lpid         x, y;
@@ -461,11 +469,13 @@ void pcs_grid_mapping()
     }
 }
 
+// Main to be run for each MPI rank
 int main(int argc, char **argv)
 {
   tw_lpid         num_cells_per_kp, vp_per_proc;
   unsigned int    additional_memory_buffers;
 
+  // Intialize ROSS env
   tw_init(&argc, &argv);
 
   nlp_per_pe = (NUM_CELLS_X * NUM_CELLS_Y) / (tw_nnodes() * g_tw_npe);
@@ -527,7 +537,7 @@ int main(int argc, char **argv)
   TWAppStats.Avg_Prey_in = 0.0; 
   TWAppStats.Avg_Prey_out = 0.0;
 
-  
+  // Run the simulation using ROSS
   tw_run();
 
   //Reduce to the correct number of Prey/Predator/Grass in Rank 0
@@ -535,13 +545,15 @@ int main(int argc, char **argv)
 
   if( tw_ismaster() )
     {
-      CellStatistics_Compute(&TWAppStats);    
+      // Compute overall cell statisitics
+      CellStatistics_Compute(&TWAppStats);
+      //Print the statisitics    
       CellStatistics_Print(&TWAppStats);
     }
 
 
 
-
+  //End ROSS env/simulation
   tw_end();
 
   return 0;
