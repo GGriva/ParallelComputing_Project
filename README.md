@@ -1,6 +1,7 @@
 # ParallelComputing_Project
 
 Run the project on kratos as 
+
   "mpirun -np 4 ./pp --synch=3 --end=32.0 --batch=4 --gvt-interval=256"
   
 Run the project on Blue Gene Q using the following in a <filename>.job file where < > 
