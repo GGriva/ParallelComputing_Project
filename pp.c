@@ -316,6 +316,7 @@ void RC_Cell_EventHandler(struct State *SV, tw_bf * CV, struct Msg_Data *M, tw_l
       //Reverse both random number generator calls
       tw_rand_reverse_unif(lp->rng);
       tw_rand_reverse_unif(lp->rng);
+      tw_rand_reverse_unif(lp->rng);
       break;
 
     case PREDATOR_MSG:
